@@ -1,0 +1,21 @@
+*&---------------------------------------------------------------------*
+*& Report z_dynm_select_new
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_dynm_select_new.
+
+DATA: gv_where   TYPE string,
+      gv_carrid  TYPE S_CARR_ID VALUE 'LH',
+      gv_connid  TYPE S_CONN_ID VALUE '0400',
+      gt_flights TYPE TABLE OF sflight.
+
+
+gv_where = |carrid = '{ gv_carrid }' and connid = '{ gv_connid }'|.
+
+
+SELECT * FROM sflight INTO TABLE gt_flights
+WHERE   (gv_where).
+
+
+cl_demo_output=>display( gt_flights ).

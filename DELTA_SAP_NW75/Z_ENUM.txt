@@ -1,0 +1,25 @@
+*&---------------------------------------------------------------------*
+*& Report Z_ENUM
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_enum.
+
+
+TYPES:
+  BEGIN OF ENUM planet,
+    mercury,
+    venus,
+    earth,
+    mars,
+    jupiter,
+    saturn,
+    uranus,
+    neptune,
+  END OF ENUM planet.
+
+DATA planet TYPE planet.
+
+planet = mercury.
+
+cl_demo_output=>display( planet ).

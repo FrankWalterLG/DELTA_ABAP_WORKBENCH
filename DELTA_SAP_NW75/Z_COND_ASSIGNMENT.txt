@@ -1,0 +1,42 @@
+*&---------------------------------------------------------------------*
+*& Report Z_COND_ASSIGNMENT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_cond_assignment.
+
+DATA: gv_kind       TYPE abap_typecategory,
+      gv_kind_label TYPE string.
+
+gv_kind = cl_abap_typedescr=>describe_by_name('SFLIGHT-CARRID')->kind.
+
+
+* old logic
+IF gv_kind = cl_abap_typedescr=>kind_elem.
+  gv_kind_label = 'ELEM_OLD'.
+ELSE.
+  gv_kind_label = 'NON-ELEM_OLD'.
+ENDIF.
+
+WRITE gv_kind_label.
+
+
+* new logicc - with COND
+CLEAR gv_kind_label.
+gv_kind_label = COND #( WHEN cl_abap_typedescr=>describe_by_name('SFLIGHT-CONNID')->kind =
+                        cl_abap_typedescr=>kind_elem
+                  THEN 'ELEM_COND'
+                  ELSE 'NON-ELEM_COND' ).
+
+WRITE: /  gv_kind_label.
+
+* new logicc - with COND
+
+CLEAR gv_kind_label.
+gv_kind_label = SWITCH #( cl_abap_typedescr=>describe_by_name('SFLIGHT-CONNID')->kind
+                         WHEN cl_abap_typedescr=>kind_elem
+                         THEN 'ELEM_SWITCH'
+                         WHEN cl_abap_typedescr=>kind_struct
+                         THEN 'STRUCTUE_SWITCH').
+
+WRITE: /  gv_kind_label.

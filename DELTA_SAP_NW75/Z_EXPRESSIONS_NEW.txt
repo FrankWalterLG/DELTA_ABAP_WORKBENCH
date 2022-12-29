@@ -1,0 +1,42 @@
+*&---------------------------------------------------------------------*
+*& Report z_test_exp
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_test_exp.
+
+DATA: lt_scarr TYPE STANDARD TABLE OF scarr,
+      lo_table TYPE REF TO cl_salv_table.
+
+lt_scarr = VALUE #(
+                  ( carrid = 'LH'
+                    carrname = 'Lufthansa'
+                    currcode = 'EUR'
+                    url      =  'www.Lufthansa.com')
+
+                    ( carrid = 'AF'
+                    carrname = 'Air France'
+                    currcode = 'EUR'
+                    url      =  'www.airfrance.com')
+
+                  ).
+
+TRY.
+    IF lo_table IS INITIAL.
+      CALL METHOD cl_salv_table=>factory
+        IMPORTING
+          r_salv_table = lo_table
+        CHANGING
+          t_table      = lt_scarr.
+    ELSE.
+      lo_table->set_data( CHANGING t_table = lt_scarr ).
+    ENDIF.
+
+* ANZEIGE DER TABELLE ALS ALV--------------------------------------------*
+    lo_table->display( ).
+
+
+  CATCH cx_salv_msg cx_salv_no_new_data_allowed.
+    MESSAGE TEXT-029 TYPE 'I' DISPLAY LIKE 'E'.
+
+ENDTRY.

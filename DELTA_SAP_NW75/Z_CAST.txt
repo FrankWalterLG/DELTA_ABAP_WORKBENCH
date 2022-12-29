@@ -1,0 +1,47 @@
+*&---------------------------------------------------------------------*
+*& Report Z_TEST_CAST
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_test_cast.
+
+CLASS lcl_class DEFINITION.
+
+  PUBLIC SECTION.
+
+    CLASS-METHODS: do_something IMPORTING io_data TYPE REF TO data.
+
+  PRIVATE SECTION.
+
+    CLASS-DATA: lo_table   TYPE REF TO cl_salv_table,
+                lt_sflight TYPE STANDARD TABLE OF sflight.
+
+
+ENDCLASS.
+
+CLASS lcl_class IMPLEMENTATION.
+
+  METHOD do_something.
+    DATA: lv_connid TYPE s_conn_id.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+
+START-OF-SELECTION.
+
+
+  DATA: gt_data TYPE STANDARD TABLE OF sflight,
+        go_data TYPE REF TO data.
+
+
+  SELECT * FROM sflight WHERE carrid = 'LH' APPENDING TABLE @gt_data.
+
+  GET REFERENCE OF gt_data INTO go_data.
+
+* old
+  lcl_class=>do_something( go_data ).
+
+* new
+  lcl_class=>do_something( REF #( gt_data ) ).
