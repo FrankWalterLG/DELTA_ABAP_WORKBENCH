@@ -1,0 +1,26 @@
+@AbapCatalog.sqlViewName: 'Z_SQL1'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Booking information'
+define view Z_BOOK
+  with parameters
+    p_days : abap.int4
+  as select from sbook
+  association [1] to scustom as _CUST on $projection.Id = _CUST.id
+{
+
+  key carrid                                                   as Carrid,
+  key connid                                                   as Connid,
+  key fldate                                                   as Fldate,
+  key bookid                                                   as Bookid,
+      dats_add_days ( order_date, $parameters.p_days, 'FAIL' ) as due_date,
+      dats_days_between ( order_date, fldate)                  as days_ahead,
+
+      
+      _CUST.id as Id,
+      _CUST
+      
+}
+where
+  carrid = 'LH';
