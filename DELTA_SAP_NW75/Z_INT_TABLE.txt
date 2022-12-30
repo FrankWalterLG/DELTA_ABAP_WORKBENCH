@@ -1,0 +1,34 @@
+*&---------------------------------------------------------------------*
+*& Report z_int_table
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_int_table.
+
+DATA: gt_flights     TYPE TABLE OF sflight,
+      gt_flights_alv TYPE TABLE OF sflight,
+      gs_flight      LIKE LINE OF gt_flights,
+      gv_seatsmax    TYPE sflight-seatsmax.
+
+
+SELECT * FROM sflight WHERE carrid = 'LH' INTO TABLE @gt_flights.
+
+gs_flight = gt_flights[ 3 ].
+APPEND gs_flight TO gt_flights_alv.
+
+
+gs_flight =  gt_flights[ carrid = 'LH' connid = '0400' ].
+APPEND gs_flight TO gt_flights_alv.
+
+
+IF line_exists( gt_flights[ carrid = 'LH' ] ).
+
+  LOOP AT gt_flights INTO gs_flight
+       FROM LINE_INDEX( gt_flights[ carrid = 'LH' ] )
+       TO   LINE_INDEX( gt_flights[ carrid = 'LH'  connid = '0401' ] ).
+  APPEND gs_flight TO gt_flights_alv.
+  ENDLOOP.
+
+cl_demo_output=>display( gt_flights_alv ).
+
+ENDIF.

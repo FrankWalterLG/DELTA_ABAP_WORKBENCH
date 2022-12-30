@@ -1,0 +1,31 @@
+*&---------------------------------------------------------------------*
+*& Report z_comprehensions
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_comprehensions.
+
+
+TYPES: gty_flights TYPE SORTED TABLE OF sflight WITH UNIQUE KEY
+       carrid connid fldate.
+
+DATA: gt_flights TYPE TABLE OF sflight,
+      gs_flight  LIKE LINE OF gt_flights.
+
+
+SELECT * FROM sflight INTO TABLE  gt_flights.
+
+
+DATA(lt_flights) = VALUE gty_flights( FOR wa IN gt_flights
+                                      WHERE ( carrid ='LH'  AND connid = '0400')
+                                      ( wa )
+                                      ).
+
+cl_demo_output=>display( lt_flights ).
+
+
+DATA(gv_total) = REDUCE i( INIT i = 0
+                           FOR flight IN gt_flights
+                            NEXT i = i + flight-seatsocc ).
+
+WRITE gv_total.

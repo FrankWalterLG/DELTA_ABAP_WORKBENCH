@@ -1,0 +1,58 @@
+*&---------------------------------------------------------------------*
+*& Report z_dynm_loop
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_dynm_loop.
+
+CLASS lcl_class DEFINITION.
+
+  PUBLIC SECTION.
+
+
+    TYPES: tyt_flight TYPE TABLE OF sflight.
+
+
+    CLASS-METHODS: get_flights IMPORTING iv_carrid  TYPE  s_carr_id
+                                         iv_connid  TYPE  s_conn_id OPTIONAL
+                               EXPORTING et_flights TYPE  tyt_flight.
+
+ENDCLASS.
+
+CLASS lcl_class IMPLEMENTATION.
+
+  METHOD get_flights.
+
+    DATA: lv_where  TYPE string,
+          ls_flight TYPE sflight.
+
+
+    lv_where =  |carrid = '{ iv_carrid }'| .
+
+    IF iv_connid IS SUPPLIED.
+      lv_where = | { lv_where } AND CONNID = '{ iv_connid }' |   .
+    ENDIF.
+
+
+    SELECT * FROM sflight INTO TABLE @et_flights
+    WHERE   (lv_where).
+
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+START-OF-SELECTION.
+
+
+  lcl_class=>get_flights( EXPORTING iv_carrid = 'LH'
+                          IMPORTING et_flights = DATA(lt_flights) ) .
+
+  cl_demo_output=>display( lt_flights ).
+
+  CLEAR lt_flights.
+  lcl_class=>get_flights( EXPORTING iv_carrid = 'LH'
+                                    iv_connid = '0400'
+                          IMPORTING et_flights = lt_flights ) .
+
+  cl_demo_output=>display( lt_flights ).

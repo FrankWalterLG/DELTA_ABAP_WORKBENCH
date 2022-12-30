@@ -1,0 +1,61 @@
+*&---------------------------------------------------------------------*
+*& Report z_int_table_sec_index
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_int_table_sec_index.
+
+TYPES ty_bookings TYPE SORTED TABLE OF sbook
+      WITH UNIQUE KEY carrid connid fldate bookid
+      WITH NON-UNIQUE SORTED KEY k_agency
+                      COMPONENTS agencynum customid bookid.
+
+
+PARAMETERS: p_loop RADIOBUTTON GROUP 001 DEFAULT 'X',
+            p_read RADIOBUTTON GROUP 001.
+
+
+DATA gt_bookings TYPE ty_bookings.
+
+
+SELECT * FROM sbook
+* WHERE agencynum = '00000284'
+INTO TABLE @gt_bookings.
+
+
+IF p_loop = 'X'.
+
+  LOOP AT gt_bookings INTO DATA(gs_bookings)  USING KEY  k_agency
+  WHERE agencynum = '00000284'.
+
+    WRITE: / gs_bookings-agencynum, 10 gs_bookings-carrid, 20 gs_bookings-connid,
+           30 gs_bookings-carrid, 40 gs_bookings-bookid.
+
+  ENDLOOP.
+
+ENDIF.
+
+IF p_read = 'X'.
+
+  READ TABLE gt_bookings INTO gs_bookings
+             WITH TABLE KEY  carrid = 'LH'
+                             connid = '0400'
+                             fldate = '20201227'
+                             bookid = '000055'.
+
+  gs_bookings-bookid = '00000077'.
+
+
+
+
+  LOOP  AT gt_bookings INTO gs_bookings USING KEY  k_agency
+  WHERE agencynum = '00000288'.
+
+     WRITE: / gs_bookings-agencynum, 10 gs_bookings-carrid, 20 gs_bookings-connid,
+           30 gs_bookings-carrid, 40 gs_bookings-bookid.
+
+  ENDLOOP.
+
+
+
+ENDIF.
